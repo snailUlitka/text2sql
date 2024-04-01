@@ -1,5 +1,6 @@
 .vscode/
 venv/
-pswrd.py
+src/pswrd.py
+src/__pycache__/
 .idea/
 .pycharm/
