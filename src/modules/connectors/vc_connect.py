@@ -1,11 +1,11 @@
-from examples import FEW_SHOT_EXAMPLES
+from modules.examples.examples import FEW_SHOT_EXAMPLES
 
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
 
 
 def get_vc(embedding_llm) -> PGVector:
-    from local_data import (
+    from local.local_data import (
         PASSWORD_OF_VC_STORE,
         VC_USER,
         VC_NAME,
@@ -29,7 +29,7 @@ def get_vc(embedding_llm) -> PGVector:
 
 
 def get_selector(embedding_llm) -> SemanticSimilarityExampleSelector:
-    from local_data import (
+    from local.local_data import (
         PASSWORD_OF_VC_STORE,
         VC_USER,
         VC_NAME,

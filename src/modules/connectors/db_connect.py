@@ -3,7 +3,7 @@ from langchain_community.utilities.sql_database import SQLDatabase
 
 
 def get_db() -> SQLDatabase:
-    from local_data import (
+    from local.local_data import (
         PASSWORD_FOR_LLM,
         DB_USER,
         DB_NAME,
