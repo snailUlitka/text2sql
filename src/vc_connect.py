@@ -1,17 +1,14 @@
-from modules.examples.examples import FEW_SHOT_EXAMPLES
-
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
+from local_data import (
+    PASSWORD_OF_VC_STORE,
+    VC_USER,
+    VC_NAME,
+    VC_PORT
+)
 
 
 def get_vc(embedding_llm) -> PGVector:
-    from local.local_data import (
-        PASSWORD_OF_VC_STORE,
-        VC_USER,
-        VC_NAME,
-        VC_PORT
-    )
-
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
         host="localhost",
@@ -28,14 +25,7 @@ def get_vc(embedding_llm) -> PGVector:
     return db
 
 
-def get_selector(embedding_llm) -> SemanticSimilarityExampleSelector:
-    from local.local_data import (
-        PASSWORD_OF_VC_STORE,
-        VC_USER,
-        VC_NAME,
-        VC_PORT
-    )
-
+def get_selector(embedding_llm, examples: list[dict[str, str]]) -> SemanticSimilarityExampleSelector:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
         host="localhost",
@@ -46,7 +36,7 @@ def get_selector(embedding_llm) -> SemanticSimilarityExampleSelector:
     )
 
     example_selector = SemanticSimilarityExampleSelector.from_examples(
-        FEW_SHOT_EXAMPLES,
+        examples,
         embedding_llm,
         PGVector,
         k=3,
@@ -64,6 +54,9 @@ if __name__ == "__main__":
         model="llama2:13b", temperature=0.25, repeat_penalty=1
     )
 
-    print(get_selector(llama_embeddings)
+    examples = [{"input": "Print all airlines",
+                 "query": "SELECT * FROM company;"}]
+
+    print(get_selector(llama_embeddings, examples)
           .select_examples({"imput": "SELECT * FROM passenger"})
           )

@@ -1,14 +1,14 @@
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain_community.utilities.sql_database import SQLDatabase
+from local_data import (
+    PASSWORD_FOR_LLM,
+    DB_USER,
+    DB_NAME,
+    DB_PORT
+)
 
 
 def get_db() -> SQLDatabase:
-    from local.local_data import (
-        PASSWORD_FOR_LLM,
-        DB_USER,
-        DB_NAME,
-        DB_PORT
-    )
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
         host="localhost",

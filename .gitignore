@@ -1,6 +1,6 @@
 .vscode/
 venv/
-src/local/local_data.py
-src/__pycache__/
+**/local_data.py
+**/__pycache__/
 .idea/
 .pycharm/
