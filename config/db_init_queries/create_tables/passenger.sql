@@ -9,16 +9,6 @@ CREATE SEQUENCE IF NOT EXISTS public.passenger_passenger_id_seq
     MAXVALUE 9223372036854775807
     CACHE 1;
 
-ALTER SEQUENCE public.passenger_passenger_id_seq
-    OWNED BY public.passenger.passenger_id;
-
-ALTER SEQUENCE public.passenger_passenger_id_seq
-    OWNER TO postgres;
-
-GRANT SELECT, USAGE ON SEQUENCE public.passenger_passenger_id_seq TO pg_read_all_data;
-
-GRANT ALL ON SEQUENCE public.passenger_passenger_id_seq TO postgres;
-
 -- Table: public.passenger
 
 -- DROP TABLE IF EXISTS public.passenger;
@@ -40,3 +30,13 @@ REVOKE ALL ON TABLE public.passenger FROM pg_read_all_data;
 GRANT SELECT ON TABLE public.passenger TO pg_read_all_data;
 
 GRANT ALL ON TABLE public.passenger TO postgres;
+
+ALTER SEQUENCE public.passenger_passenger_id_seq
+    OWNED BY public.passenger.passenger_id;
+
+ALTER SEQUENCE public.passenger_passenger_id_seq
+    OWNER TO postgres;
+
+GRANT SELECT, USAGE ON SEQUENCE public.passenger_passenger_id_seq TO pg_read_all_data;
+
+GRANT ALL ON SEQUENCE public.passenger_passenger_id_seq TO postgres;
