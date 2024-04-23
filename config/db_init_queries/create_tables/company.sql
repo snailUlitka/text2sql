@@ -1,3 +1,24 @@
+-- SEQUENCE: public.company_company_id_seq
+
+-- DROP SEQUENCE IF EXISTS public.company_company_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.company_company_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.company_company_id_seq
+    OWNED BY public.company.company_id;
+
+ALTER SEQUENCE public.company_company_id_seq
+    OWNER TO postgres;
+
+GRANT SELECT, USAGE ON SEQUENCE public.company_company_id_seq TO pg_read_all_data;
+
+GRANT ALL ON SEQUENCE public.company_company_id_seq TO postgres;
+
 -- Table: public.company
 
 -- DROP TABLE IF EXISTS public.company;

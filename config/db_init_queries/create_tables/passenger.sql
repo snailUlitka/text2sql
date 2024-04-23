@@ -1,3 +1,24 @@
+-- SEQUENCE: public.passenger_passenger_id_seq
+
+-- DROP SEQUENCE IF EXISTS public.passenger_passenger_id_seq;
+
+CREATE SEQUENCE IF NOT EXISTS public.passenger_passenger_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.passenger_passenger_id_seq
+    OWNED BY public.passenger.passenger_id;
+
+ALTER SEQUENCE public.passenger_passenger_id_seq
+    OWNER TO postgres;
+
+GRANT SELECT, USAGE ON SEQUENCE public.passenger_passenger_id_seq TO pg_read_all_data;
+
+GRANT ALL ON SEQUENCE public.passenger_passenger_id_seq TO postgres;
+
 -- Table: public.passenger
 
 -- DROP TABLE IF EXISTS public.passenger;
