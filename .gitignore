@@ -1,5 +1,5 @@
 .vscode/
-venv/
+.venv/
 **/local_data.py
 **/__pycache__/
 .idea/
