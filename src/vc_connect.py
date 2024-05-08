@@ -1,3 +1,7 @@
+"""
+Provides access to the vector database according to the specified parameters `local_data.py` data for connection.
+Data in `local_data.py` you can create using `local_data_template.py`
+"""
 from langchain_community.vectorstores.pgvector import PGVector
 from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
 from local_data import (
