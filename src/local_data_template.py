@@ -1,3 +1,7 @@
+"""
+To generate `local_data.py` which is used to gain access to the database. 
+Creates a file at execute `local_data.py` in the same directory.
+"""
 PASSWORD_FOR_LLM = ""
 PASSWORD_OF_VC_STORE = ""
 

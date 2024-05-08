@@ -1,3 +1,4 @@
+"""Stores an array with examples for use in the Few-Shots method."""
 FEW_SHOT_EXAMPLES = [
     {
         "input": "How many passengers are in the database?",
