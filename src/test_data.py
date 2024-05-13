@@ -24,7 +24,7 @@ class TestData:
         "Print the names of the passengers who flew to California by Airbus A320 aircraft",
     ]
     SQL_QUERIES = [
-        "SELECT passenger_name FROM passenger LIMIT 5;",
+        "SELECT passenger_name FROM passenger ORDER BY passenger_name LIMIT 5;",
         "SELECT company_name FROM company;",
         "SELECT plane FROM trip WHERE town_from = \'Washington\';",
         "SELECT passenger_name FROM passenger WHERE passenger_name LIKE \'%man\';",
@@ -45,7 +45,7 @@ class TestData:
         for query in SQL_QUERIES
     ]
     ANSWER = [
-        "Here are the names you asked for: \'John\', \'James\', \'Poul\', \'Christofer\', \'Superman\'",
+        "Here are the names you asked for: \'Alice\', \'Bob\', \'Charlie\', \'Christofer\', \'David\'",
         "Here are the names you asked for: \'American Airlines\', \'S7 Airlines\', \'Nordwind Airlines\'",
         "Here are planes you asked for: \'Airbus A320\'",
         "Here are names you asked for: \'Superman\'",
