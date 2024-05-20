@@ -22,7 +22,6 @@ executing a query, rewrite the query and try again.
 
 DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the database.
 
-
 You have access to 3 tables: {table_names}
 
 {table_descriptions}

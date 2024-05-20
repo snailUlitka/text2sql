@@ -30,7 +30,7 @@ FEW_SHOT_EXAMPLES = [
     },
     {
         "input": "Print out the names of all the planes",
-        "query": "SELECT \"plane\" FROM public.\"trip\""
+        "query": "SELECT \"plane\" FROM public.\"trip\" LIMIT 20;"
     },
     {
         "input": "How many people fly on Airbus A320?",

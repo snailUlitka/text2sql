@@ -68,9 +68,9 @@ class PromptGenerator:
 
     def get_prompt(
         self,
+        *,
         prefix: str = None,
         suffix: str = None,
-        *,
         table_names: List[str] = None,
         table_descriptions: Dict[str, str] = None,
         example_prompt: Optional[PromptTemplate] = None,

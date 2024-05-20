@@ -7,7 +7,7 @@ from typing import Literal
 class TestData:
     """This class named TestData contains lists for `QUESTIONS`, `SQL_QUERIES`, `QUERY_RESULTS`, and `ANSWER`."""
     QUESTIONS = [
-        "Print the first 5 names of the passengers",
+        "Print the first 5 names of the passengers, sorted by name",
         "Print the names of all companies",
         "Print all planes from flights from Washington",
         "Print the names of people that end in \"man\"",
