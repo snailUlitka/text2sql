@@ -23,7 +23,7 @@ from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
 from langchain.embeddings.base import Embeddings
 
 
-def get_vc(embedding_llm) -> PGVector:
+def get_vc(embedding_llm: Embeddings) -> PGVector:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
         host="localhost",
@@ -33,9 +33,12 @@ def get_vc(embedding_llm) -> PGVector:
         password=PASSWORD_OF_VC_STORE
     )
 
-    db = PGVector(CONNECTION_STRING, embedding_llm,
-                  pre_delete_collection=True, use_jsonb=True
-                  )
+    db = PGVector(
+        CONNECTION_STRING,
+        embedding_llm,
+        pre_delete_collection=True,
+        use_jsonb=True
+    )
 
     return db
 
@@ -43,9 +46,9 @@ def get_vc(embedding_llm) -> PGVector:
 def get_selector(
     *,
     embedding_llm: Embeddings,
-    examples: list[dict[str, str]],
-    k=3,
-    input_keys 
+    examples: List[Dict[str, str]],
+    k: int = 3,
+    input_keys: List[str]
 ) -> SemanticSimilarityExampleSelector:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
