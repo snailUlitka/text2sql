@@ -1,3 +1,4 @@
 """Dataset for test designed LLM"""
+from src.test_datasets.test_data import TestData
 
-# TODO add imports from inner modules
+__all__ = ["TestData"]

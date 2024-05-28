@@ -1,3 +1,4 @@
 """Module stores prompts and `prompt_generator`, which return prompt from parts"""
+from src.prompts.prompt_generator import PromptGenerator
 
-# TODO add imports from inner modules
+__all__ = ["PromptGenerator"]

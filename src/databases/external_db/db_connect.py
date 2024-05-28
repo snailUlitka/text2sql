@@ -2,14 +2,15 @@
 Provides access to the database according to the specified parameters `local_data.py` data for connection.
 Data in `local_data.py` you can create using `local_data_template.py`
 """
-from langchain_community.vectorstores.pgvector import PGVector
-from langchain_community.utilities.sql_database import SQLDatabase
-from local_data import (
+from src.databases.local_data import (
     PASSWORD_FOR_LLM,
     DB_USER,
     DB_NAME,
     DB_PORT
 )
+
+from langchain_community.vectorstores.pgvector import PGVector
+from langchain_community.utilities.sql_database import SQLDatabase
 
 
 def get_db() -> SQLDatabase:

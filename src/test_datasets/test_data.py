@@ -1,7 +1,7 @@
 """Module with data for test LLM models"""
-import db_connect
-
 from typing import Literal
+
+from src.databases.external_db import get_db
 
 
 class TestData:
@@ -41,7 +41,7 @@ class TestData:
         "SELECT passenger_name FROM passenger Pa LEFT JOIN pass_in_trip PaTr ON Pa.passenger_id = PaTr.passenger_id LEFT JOIN trip Tr ON PaTr.trip_id = Tr.trip_id WHERE town_to = \'California\' AND plane = \'Airbus A320\';"
     ]
     QUERY_RESULTS = [
-        str(db_connect.get_db().run(query))
+        str(get_db().run(query))
         for query in SQL_QUERIES
     ]
     ANSWER = [
@@ -121,5 +121,5 @@ class TestData:
 
 
 if __name__ == "__main__":
-    db = db_connect.get_db()
+    db = get_db()
     print(db.run("SELECT * FROM passenger LIMIT 3"))

@@ -8,7 +8,7 @@ from typing import (
     List
 )
 
-from local_data import (
+from src.databases.local_data import (
     PASSWORD_OF_VC_STORE,
     VC_USER,
     VC_NAME,
@@ -18,7 +18,6 @@ from local_data import (
 from langchain_community.vectorstores.pgvector import PGVector
 
 from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
-
 
 from langchain.embeddings.base import Embeddings
 

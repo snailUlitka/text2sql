@@ -6,9 +6,9 @@ from typing import (
     Dict
 )
 
-import vc_connect
-import db_connect
-from prompt import (
+from src.databases.vector_db import get_selector
+from src.databases.external_db import get_db
+from src.prompts.sql_expert_prompt import (
     PREFIX,
     TABLE_DESCRIPTIONS,
     SUFFIX,
@@ -57,7 +57,7 @@ class PromptGenerator:
         if example_selector:
             self.example_selector = example_selector
         else:
-            self.example_selector = vc_connect.get_selector(
+            self.example_selector = get_selector(
                 embedding_llm=embedding_llm,
                 examples=examples,
                 k=k,
@@ -93,7 +93,7 @@ class PromptGenerator:
         if not (prefix and suffix and table_names and table_descriptions):
             prefix = PREFIX
             suffix = SUFFIX
-            table_names = db_connect.get_db().get_usable_table_names()
+            table_names = get_db().get_usable_table_names()
             table_descriptions = TABLE_DESCRIPTIONS
 
         if not all(key in table_descriptions for key in table_names):

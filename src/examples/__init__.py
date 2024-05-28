@@ -1,3 +1,4 @@
 """Module stores examples for LLM"""
+from examples.few_shot_examples import FEW_SHOT_EXAMPLES
 
-# TODO add imports from inner modules
+__all__ = ["FEW_SHOT_EXAMPLES"]
