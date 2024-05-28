@@ -1,7 +1,7 @@
 """Module with data for test LLM models"""
 from typing import Literal
 
-from src.databases.external_db import get_db
+from app.databases.external_db import get_db
 
 
 class TestData:

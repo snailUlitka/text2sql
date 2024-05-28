@@ -6,9 +6,9 @@ from typing import (
     Dict
 )
 
-from src.databases.vector_db import get_selector
-from src.databases.external_db import get_db
-from src.prompts.sql_expert_prompt import (
+from app.databases.vector_db import get_selector
+from app.databases.external_db import get_db
+from app.prompts.sql_expert_prompt import (
     PREFIX,
     TABLE_DESCRIPTIONS,
     SUFFIX,

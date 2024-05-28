@@ -1,5 +1,5 @@
 """External database for connecting to LLM"""
-from src.databases.external_db.db_connect import (
+from app.databases.external_db.db_connect import (
     get_db
 )
 
