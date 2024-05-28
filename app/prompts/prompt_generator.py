@@ -6,9 +6,9 @@ from typing import (
     Dict
 )
 
-import vc_connect
-import db_connect
-from prompt import (
+from app.databases.vector_db import get_selector
+from app.databases.external_db import get_db
+from app.prompts.sql_expert_prompt import (
     PREFIX,
     TABLE_DESCRIPTIONS,
     SUFFIX,
@@ -39,7 +39,7 @@ class PromptGenerator:
         k: Optional[int],
         embedding_llm: Optional[Embeddings] = None,
         example_selector: Optional[BaseExampleSelector] = None,
-        input_keys = ["input"]
+        input_keys: List[str] = ["input"]
     ):
         if not examples:
             raise ValueError(
@@ -57,7 +57,7 @@ class PromptGenerator:
         if example_selector:
             self.example_selector = example_selector
         else:
-            self.example_selector = vc_connect.get_selector(
+            self.example_selector = get_selector(
                 embedding_llm=embedding_llm,
                 examples=examples,
                 k=k,
@@ -75,7 +75,7 @@ class PromptGenerator:
         table_descriptions: Dict[str, str] = None,
         example_prompt: Optional[PromptTemplate] = None,
         input_variables: List[str] = ["dialect", "input", "top_k"]
-    ):
+    ) -> ChatPromptTemplate:
         """Generate prompt with few-shots example selector.
 
         Args:
@@ -93,7 +93,7 @@ class PromptGenerator:
         if not (prefix and suffix and table_names and table_descriptions):
             prefix = PREFIX
             suffix = SUFFIX
-            table_names = db_connect.get_db().get_usable_table_names()
+            table_names = get_db().get_usable_table_names()
             table_descriptions = TABLE_DESCRIPTIONS
 
         if not all(key in table_descriptions for key in table_names):
