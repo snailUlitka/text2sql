@@ -39,7 +39,7 @@ class PromptGenerator:
         k: Optional[int],
         embedding_llm: Optional[Embeddings] = None,
         example_selector: Optional[BaseExampleSelector] = None,
-        input_keys = ["input"]
+        input_keys: List[str] = ["input"]
     ):
         if not examples:
             raise ValueError(
@@ -75,7 +75,7 @@ class PromptGenerator:
         table_descriptions: Dict[str, str] = None,
         example_prompt: Optional[PromptTemplate] = None,
         input_variables: List[str] = ["dialect", "input", "top_k"]
-    ):
+    ) -> ChatPromptTemplate:
         """Generate prompt with few-shots example selector.
 
         Args:

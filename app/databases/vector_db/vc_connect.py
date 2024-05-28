@@ -10,9 +10,10 @@ from typing import (
 
 from app.databases.local_data import (
     PASSWORD_OF_VC_STORE,
-    VC_USER,
+    VC_HOST,
+    VC_PORT,
     VC_NAME,
-    VC_PORT
+    VC_USER
 )
 
 from langchain_community.vectorstores.pgvector import PGVector
@@ -25,7 +26,7 @@ from langchain.embeddings.base import Embeddings
 def get_vc(embedding_llm: Embeddings) -> PGVector:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
-        host="localhost",
+        host=VC_HOST,
         port=VC_PORT,
         database=VC_NAME,
         user=VC_USER,
@@ -51,7 +52,7 @@ def get_selector(
 ) -> SemanticSimilarityExampleSelector:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
-        host="localhost",
+        host=VC_HOST,
         port=VC_PORT,
         database=VC_NAME,
         user=VC_USER,

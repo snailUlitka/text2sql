@@ -4,9 +4,10 @@ Data in `local_data.py` you can create using `local_data_template.py`
 """
 from app.databases.local_data import (
     PASSWORD_FOR_LLM,
-    DB_USER,
+    DB_HOST,
+    DB_PORT,
     DB_NAME,
-    DB_PORT
+    DB_USER
 )
 
 from langchain_community.vectorstores.pgvector import PGVector
@@ -16,7 +17,7 @@ from langchain_community.utilities.sql_database import SQLDatabase
 def get_db() -> SQLDatabase:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
         driver="psycopg2",
-        host="localhost",
+        host=DB_HOST,
         port=DB_PORT,
         database=DB_NAME,
         user=DB_USER,
@@ -26,7 +27,3 @@ def get_db() -> SQLDatabase:
     db.run("SET ROLE pg_read_all_data")
 
     return db
-
-
-if __name__ == "__main__":
-    print(get_db().run("select * from passenger"))
