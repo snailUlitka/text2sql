@@ -13,7 +13,7 @@ FEW_SHOT_EXAMPLES = [
         "query": "SELECT \"place\" FROM public.\"pass_in_trip\"" +
             "JOIN public.\"passenger\" ON public.\"passenger\"." +
             "\"passenger_id\" = public.\"pass_in_trip\".\"passenger_id\" " +
-            "WHERE public.\"passenger\".\"passenger_name\" = \'John\';"
+            "WHERE public.\"passenger\".\"passenger_name\" = 'John';"
     },
     {
         "input": "Give me all the information about 1 company",
@@ -26,7 +26,7 @@ FEW_SHOT_EXAMPLES = [
     },
     {
         "input": "Which planes depart from Washington?",
-        "query": "SELECT \"plane\" FROM public.\"trip\" WHERE \"town_from\" = \'Washington\';"
+        "query": "SELECT \"plane\" FROM public.\"trip\" WHERE \"town_from\" = 'Washington';"
     },
     {
         "input": "Print out the names of all the planes",
@@ -36,7 +36,7 @@ FEW_SHOT_EXAMPLES = [
         "input": "How many people fly on Airbus A320?",
         "query": "SELECT COUNT(*) FROM public.\"pass_in_trip\"" +
             " AS paip JOIN public.\"trip\" ON trip.\"trip_id\"" +
-            " = paip.\"trip_id\" WHERE trip.\"plane\" = \'Airbus A320\';"
+            " = paip.\"trip_id\" WHERE trip.\"plane\" = 'Airbus A320';"
     },
     {
         "input": "List all companies.",
@@ -57,46 +57,46 @@ FEW_SHOT_EXAMPLES = [
             " pt ON p.\"passenger_id\" = pt.\"passenger_id\" WHERE pt.\"trip_id\" = 123 LIMIT 20;"
     },
     {
-        "input": "List all trips from \'New York\' to \'Los Angeles\'.",
+        "input": "List all trips from 'New York' to 'Los Angeles'.",
         "query": "SELECT \"plane\", \"town_from\", \"town_to\", \"time_out\"," + 
             " \"time_in\" FROM \"trip\" WHERE \"town_from\" = 'New York' AND" +
-            " \"town_to\" = \'Los Angeles\' LIMIT 20;"
+            " \"town_to\" = 'Los Angeles' LIMIT 20;"
     },
     {
-        "input": "List all passengers who traveled with \'Jet Airways\'.",
+        "input": "List all passengers who traveled with 'Jet Airways'.",
         "query": "SELECT DISTINCT p.\"passenger_name\" FROM \"passenger\"" +
             " p INNER JOIN \"pass_in_trip\" pt ON p.\"passenger_id\" = " +
             "pt.\"passenger_id\" INNER JOIN \"trip\" t ON pt.\"trip_id\"" +
             " = p.\"trip_id\" INNER JOIN \"company\" c ON t.\"company_id\"" +
-            " = p.\"company_id\" WHERE p.\"company_name\" = \'Jet Airways\' LIMIT 20;"
+            " = p.\"company_id\" WHERE p.\"company_name\" = 'Jet Airways' LIMIT 20;"
     },
     {
-        "input": "List all trips where \'John Smith\' was a passenger.",
+        "input": "List all trips where 'John Smith' was a passenger.",
         "query": "SELECT t.* FROM \"trip\" t INNER JOIN \"pass_in_trip\"" +
             " pt ON p.\"trip_id\" = pt.\"trip_id\" INNER JOIN \"passenger\"" + 
             " p ON pt.\"passenger_id\" = p.\"passenger_id\" WHERE " + 
-            "p.\"passenger_name\" = \'John Smith\' LIMIT 20;"
+            "p.\"passenger_name\" = 'John Smith' LIMIT 20;"
     },
     {
-        "input": "List all passengers who traveled from \'Chicago\'" +
-            " to \'San Francisco\' on \'Delta Airlines\'.",
+        "input": "List all passengers who traveled from 'Chicago'" +
+            " to 'San Francisco' on 'Delta Airlines'.",
         "query": "SELECT DISTINCT p.\"passenger\" FROM \"passenger\" p INNER JOIN" +
             " \"pass_in_trip\" pt ON p.\"passenger_id\" = pt.\"passenger_id\"" +
             " INNER JOIN trip t ON pt.\"trip_id\" = p.\"trip_id\" INNER JOIN" +
             " company c ON t.\"company_id\" = p.\"company_id\" WHERE t.\"town_from\"" +
-            " = \'Chicago\' AND t.\"town_to\" = \'San Francisco\' AND p.\"company_name\"" +
-            " = \'Delta Airlines\' LIMIT 20;"
+            " = 'Chicago' AND t.\"town_to\" = 'San Francisco' AND p.\"company_name\"" +
+            " = 'Delta Airlines' LIMIT 20;"
     },
     {
-        "input": "List all trips that departed after \'2024-01-01 00:00:00\'.",
-        "query": "SELECT * FROM \"trip\" WHERE \"time_out\" > \'2024-01-01 00:00:00\' LIMIT 20;"
+        "input": "List all trips that departed after '2024-01-01 00:00:00'.",
+        "query": "SELECT * FROM \"trip\" WHERE \"time_out\" > '2024-01-01 00:00:00' LIMIT 20;"
     },
     {
         "input": "List all passengers who traveled with 'Air Canada' and sat in seat 'A3'.",
         "query": "SELECT DISTINCT p.\"passenger_name\" FROM \"passenger\" p INNER JOIN \"pass_in_trip\"" + 
             " pt ON p.\"passenger_id\" = pt.\"passenger_id\" INNER JOIN \"trip\" t ON " +
             "pt.\"trip_id\" = p.\"trip_id\" INNER JOIN \"company\" c ON t.\"company_id\" " +
-            "= p.\"company_id\" WHERE p.\"company_name\" = \'Air Canada\' AND " +
-            "pt.\"place\" = \'A3\' LIMIT 20;"
+            "= p.\"company_id\" WHERE p.\"company_name\" = 'Air Canada' AND " +
+            "pt.\"place\" = 'A3' LIMIT 20;"
     },
 ]
