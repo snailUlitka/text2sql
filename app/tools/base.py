@@ -20,6 +20,7 @@ class AgentBaseTool(ABC):
     def wrap_result_with_human_message(
         self,
         tool_result: str | Dict[str, str],
+        example,
         **kwargs
     ) -> HumanMessage:
         pass

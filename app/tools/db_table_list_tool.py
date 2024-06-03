@@ -49,6 +49,7 @@ class DatabaseTableListTool:
     def wrap_result_with_human_message(
         self,
         tool_result: str,
+        example=False,
         **kwagrs
     ):
         info_tool_name = kwagrs.get(
@@ -64,5 +65,6 @@ class DatabaseTableListTool:
             "It looks like a list of table names. " +
             "Maybe it will help to get an response. I think if you don't " +
             f"have enough information, you can use this: '{info_tool_name}'" +
-            "\n\nResult of tool: \n" + tool_result
+            "\n\nResult of tool: \n" + tool_result,
+            example=example
         )
