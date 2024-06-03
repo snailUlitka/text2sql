@@ -32,15 +32,15 @@ def create_local_data_file(
 ):
     with open(path, "w") as file:
         file.write(
-            f"PASSWORD_FOR_LLM = \"{password_for_external_db}\"\n" +\
-            f"PASSWORD_OF_VC_STORE = \"{passwrod_for_vector_db}\"\n\n" +\
-            f"DB_HOST = \"{external_db_host}\"\n" +\
-            f"DB_PORT = {external_db_port}\n" +\
-            f"DB_NAME = \"{external_db_name}\"\n" +\
-            f"DB_USER = \"{external_db_user}\"\n\n" +\
-            f"VC_HOST = \"{vector_db_host}\"\n" +\
-            f"VC_PORT = {vector_db_port}\n" +\
-            f"VC_NAME = \"{vector_db_name}\"\n" +\
+            f"PASSWORD_FOR_LLM = \"{password_for_external_db}\"\n" +
+            f"PASSWORD_OF_VC_STORE = \"{passwrod_for_vector_db}\"\n\n" +
+            f"DB_HOST = \"{external_db_host}\"\n" +
+            f"DB_PORT = {external_db_port}\n" +
+            f"DB_NAME = \"{external_db_name}\"\n" +
+            f"DB_USER = \"{external_db_user}\"\n\n" +
+            f"VC_HOST = \"{vector_db_host}\"\n" +
+            f"VC_PORT = {vector_db_port}\n" +
+            f"VC_NAME = \"{vector_db_name}\"\n" +
             f"VC_USER = \"{vector_db_user}\"\n"
         )
 

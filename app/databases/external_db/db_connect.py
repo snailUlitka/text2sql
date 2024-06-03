@@ -1,5 +1,6 @@
 """
-Provides access to the database according to the specified parameters `local_data.py` data for connection.
+Provides access to the database according to the specified parameters 
+`local_data.py` data for connection.
 Data in `local_data.py` you can create using `local_data_template.py`
 """
 from app.databases.local_data import (

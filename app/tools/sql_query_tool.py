@@ -71,6 +71,7 @@ class SQLQueryTool:
     def wrap_result_with_human_message(
         self,
         tool_result: Dict[str, str],
+        example=False,
         **kwargs
     ):
         conversational_tool_name = kwargs.get(
@@ -100,5 +101,6 @@ class SQLQueryTool:
             "And so, I think I managed to call it, but I can't read " +
             "what's written there, only a smart AI can understand it." +
             f"\nI checked, the result of the tool\n{human_message}" +
-            "\n\nResult of tool: \n" + tool_result["result"]
+            "\n\nResult of tool: \n" + tool_result["result"],
+            example=example
         )

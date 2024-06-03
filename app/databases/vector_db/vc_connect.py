@@ -18,7 +18,9 @@ from app.databases.local_data import (
 
 from langchain_community.vectorstores.pgvector import PGVector
 
-from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
+from langchain.prompts.example_selector import (
+    SemanticSimilarityExampleSelector
+)
 
 from langchain.embeddings.base import Embeddings
 

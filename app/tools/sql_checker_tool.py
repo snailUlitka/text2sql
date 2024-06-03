@@ -45,11 +45,13 @@ Double check the {dialect} query for common mistakes, including:
 - Casting to the correct data type
 - Using the proper columns for joins
 
-Also check that all column and table names correspond to the database, these are the ones you need to check:
+Also check that all column and table names correspond to the database, these \
+are the ones you need to check:
 
 {db_names}
 
-If there are any of the above mistakes, rewrite the query. If there are no mistakes, just reproduce the original query.
+If there are any of the above mistakes, rewrite the query. If there are no \
+mistakes, just reproduce the original query.
 
 OUTPUT THE FINAL SQL QUERY ONLY."""
 
@@ -64,7 +66,10 @@ class SQLCheckerTool:
         key_words: Optional[List[str]] = None,
         checker_prompt: Optional[BaseChatPromptTemplate] = None
     ):
-        """`key_words` - keywords that are used in the CREATE TABLE construction"""
+        """
+        `key_words` - keywords that are used in the 
+        CREATE TABLE construction
+        """
         self.llm = llm
         self.db = db
         self.tool_name = tool_name
@@ -104,12 +109,9 @@ class SQLCheckerTool:
             if column_name_or_key_word.upper() not in self.key_words
         ]
 
-    def _extract_names_from_db(
-        self,
-        create_table_query: str
-    ):
+    def _extract_names_from_db(self):
         # Removes VARCHAR(60) and others for subsequent processing
-        clean_sql = re.sub(r"\(\d+\)", "", create_table_query)
+        clean_sql = re.sub(r"\(\d+\)", "", self.db.get_table_info())
 
         # Removes sample rows in table info
         clean_sql = re.sub(r"/\*(.|\s)*?\*/", "", clean_sql)
@@ -122,7 +124,8 @@ class SQLCheckerTool:
         for name in table_names:
             # Returns a description {names}
             table_sql = re.search(
-                fr"CREATE TABLE {name} \((\s+(.|\s+)*?)\s+\)", clean_sql).group(1)
+                fr"CREATE TABLE {name} \((\s+(.|\s+)*?)\s+\)", clean_sql
+            ).group(1)
 
             # Gets all column names and constraints (this is noise)
             columns_part = re.findall(r"\n\t(\w+)", table_sql)
@@ -130,18 +133,13 @@ class SQLCheckerTool:
             names.append({
                 "name": name,
                 # Exclude constraints (noise)
-                "columns": self._exclude_key_words_from_list(
-                    columns_part, self.key_words
-                )
+                "columns": self._exclude_key_words_from_list(columns_part)
             })
 
         return names
 
     def _execute_tool(self, query_to_check: str) -> str:
-        db_names_list = self._extract_names_from_db(
-            self.db.get_table_info(),
-            self.key_words
-        )
+        db_names_list = self._extract_names_from_db()
 
         db_names = ""
         for name_pair in db_names_list:
@@ -179,7 +177,12 @@ class SQLCheckerTool:
     def get_tool(self):
         return self._execute_tool
 
-    def wrap_result_with_human_message(self, tool_result: str, **kwargs):
+    def wrap_result_with_human_message(
+        self, 
+        tool_result: str,
+        example=False, 
+        **kwargs
+    ):
         return HumanMessage(
             content="I can help you execute the tool. Give me a second... " +
             "And so, I think I managed to call it, but I can't read " +
@@ -187,5 +190,6 @@ class SQLCheckerTool:
             "\nI checked, the result of the tool\n" +
             "It looks like an SQL query! I think it's the " +
             "right one. Try to execute this query." +
-            "\n\nResult of tool: \n" + tool_result
+            "\n\nResult of tool: \n" + tool_result,
+            example=example
         )

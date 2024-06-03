@@ -11,16 +11,15 @@ from app.tools import AgentBaseTool
 from app.prompts import PromptGenerator
 
 from langchain.schema.agent import AgentFinish, AgentActionMessageLog
-from langchain.agents.output_parsers.openai_functions import OpenAIFunctionsAgentOutputParser
+from langchain.chat_models.base import BaseChatModel
+from langchain.agents.output_parsers.openai_functions import (
+    OpenAIFunctionsAgentOutputParser
+)
 
 from langchain_community.utilities.sql_database import SQLDatabase
 
 from langchain_core.messages.ai import AIMessage
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.pydantic_v1 import (
-    BaseModel,
-    Field
-)
 
 from langchain_experimental.llms.ollama_functions import (
     OllamaFunctions,
@@ -32,16 +31,18 @@ class OllamaFunctionsSQLAgent:
     def __init__(
         self,
         *,
-        llm: OllamaFunctions,
+        ollama_functions: OllamaFunctions,
+        chat_llm: BaseChatModel,
         prompt_generator: PromptGenerator,
         db: SQLDatabase,
         extra_tools: Optional[List[AgentBaseTool]] = None,
         iteration_limit=10
     ):
-        self.llm = llm
+        self.ollama_functions = ollama_functions
+        self.chat_llm = chat_llm
         self.prompt_generator = prompt_generator
         self.db = db
-        self.tools = get_tools(llm, db)
+        self.tools = get_tools(chat_llm, db)
 
         if extra_tools is not None:
             self.tools + extra_tools
@@ -84,19 +85,20 @@ class OllamaFunctionsSQLAgent:
 
         return agent_scratchpad
 
+    def _intermediate_steps_to_agent_scratchpad(self, steps):
+        return self.format_to_ollama_chat_messages(steps['intermediate_steps'])
+
     def _get_agent(self):
-        llm_with_tools = self.llm.bind_tools(
+        llm_with_tools = self.ollama_functions.bind_tools(
             tools=[t.get_function() for t in self.tools] +
-                [DEFAULT_RESPONSE_FUNCTION]
+            [DEFAULT_RESPONSE_FUNCTION]
         )
 
         agent = (
             RunnablePassthrough.assign(
-                agent_scratchpad=lambda steps: self.format_to_ollama_chat_messages(
-                    steps['intermediate_steps']
-                )
+                agent_scratchpad=self._intermediate_steps_to_agent_scratchpad
             )
-            | self.prompt_generator.get_prompt()
+            | self.prompt_generator.get_prompt(db=self.db, llm=self.chat_llm)
             | llm_with_tools
             | OpenAIFunctionsAgentOutputParser()
         )

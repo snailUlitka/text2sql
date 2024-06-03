@@ -25,13 +25,16 @@ class DatabaseTableInfoTool(AgentBaseTool):
         self.tool_name = tool_name
 
     class InfoSQLDatabaseTool(BaseModel):
-        """INPUT to this tool is a comma-separated LIST OF TABLES, 
+        """
+        INPUT to this tool is a comma-separated LIST OF TABLES, 
         output is the schema and sample rows for those tables. 
         Be sure that the tables actually exist by calling 
         '<list_tool>' first! Example Input: table1, table2, table3.
-        This tool will not help if you need to get information about a column!"""
+        This tool will not help if you need to get information about a column!
+        """
         list_of_tables: str = Field(
-            description="Comma-separated list of tables. Example: table1, table2, table3"
+            description="Comma-separated list of tables. Example: table1, " +
+                "table2, table3"
         )
 
     def _execute_tool(self, list_of_tables: str):
@@ -69,7 +72,12 @@ class DatabaseTableInfoTool(AgentBaseTool):
     def get_tool(self):
         return self._execute_tool
 
-    def wrap_result_with_human_message(self, tool_result: str, **kwargs):
+    def wrap_result_with_human_message(
+        self, 
+        tool_result: str,
+        example=False, 
+        **kwargs
+    ):
         return HumanMessage(
             content="I can help you execute the tool. Give me a second... " +
                 "And so, I think I managed to call it, but I can't read " +
@@ -78,5 +86,6 @@ class DatabaseTableInfoTool(AgentBaseTool):
                 "It looks like the structure of the database " +
                 "tables(s). Maybe this will help you write the right query? " +
                 "Please make sure you remember the names!" +
-                "\n\nResult of tool: \n" + tool_result
+                "\n\nResult of tool: \n" + tool_result,
+                example=example
         )
