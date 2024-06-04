@@ -3,13 +3,15 @@ from typing import (
     List,
     Tuple,
     Dict,
-    Optional
+    Optional,
+    Any
 )
 
 from app.tools import get_tools
 from app.tools import AgentBaseTool
 from app.prompts import PromptGenerator
 
+from langchain_core.runnables import RunnableLambda, Runnable
 from langchain.schema.agent import AgentFinish, AgentActionMessageLog
 from langchain.chat_models.base import BaseChatModel
 from langchain.agents.output_parsers.openai_functions import (
@@ -144,6 +146,49 @@ class OllamaFunctionsSQLAgent:
             number_of_iteration += 1
 
         return "Agent stop due to limited number of iterations!"
+    
+    async def async_run_agent(
+        self,
+        input: str,
+        top_k=20
+    ) -> AgentFinish | str:
+        number_of_iteration = 0
+        intermediate_steps = []
+
+        while number_of_iteration < self.iteration_limit:
+            result = await self._get_agent().ainvoke({
+                "dialect": self.db.dialect,
+                "input": input,
+                "top_k": top_k,
+                "intermediate_steps": intermediate_steps
+            })
+
+            if isinstance(result, AgentFinish):
+                return result
+            else:
+                result: AgentActionMessageLog = result
+
+            tool_to_execute = None
+
+            for tool in self.tools:
+                if tool.get_tool_name() == result.tool:
+                    tool_to_execute = tool
+                    break
+
+            if tool_to_execute is None:
+                raise ToolNotFoundException(result.tool)
+
+            if isinstance(result.tool_input, str):
+                observation = tool(result.tool_input)
+            else:
+                observation = tool_to_execute.get_tool()(**result.tool_input)
+            intermediate_steps.append((result, observation))
+            number_of_iteration += 1
+
+        return "Agent stop due to limited number of iterations!"
+
+    def get_runnable(self) -> Runnable:
+        return RunnableLambda(func=self.run_agent, afunc=self.async_run_agent)
 
 
 class ToolNotFoundException(Exception):
