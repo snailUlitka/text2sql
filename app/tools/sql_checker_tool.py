@@ -7,6 +7,8 @@ from typing import (
     Any
 )
 
+from app.tools.base import AgentBaseTool
+
 from langchain.chat_models.base import BaseChatModel
 from langchain.agents.openai_tools.base import convert_to_openai_tool
 from langchain.prompts import (
@@ -58,7 +60,7 @@ mistakes, just reproduce the original query.
 OUTPUT THE FINAL SQL QUERY ONLY."""
 
 
-class SQLCheckerTool:
+class SQLCheckerTool(AgentBaseTool):
     def __init__(
         self,
         llm: BaseChatModel,

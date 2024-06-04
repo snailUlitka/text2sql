@@ -45,7 +45,9 @@ def get_messages_example(
             example=True
         ),
         info_tool.wrap_result_with_human_message(
-            info_tool._execute_tool(["pass_in_trip", "passenger", "trip"]),
+            info_tool._execute_tool(
+                list_of_tables="pass_in_trip, passenger, trip"
+            ),
             example=True
         ),
         AIMessage(
@@ -93,7 +95,7 @@ def get_messages_example(
         ),
         query_tool.wrap_result_with_human_message(
             query_tool._execute_tool(
-                "SELECT passenger_name FROM passenger " +
+                sql_query="SELECT passenger_name FROM passenger " +
                 "Pa LEFT JOIN pass_in_trip PaTr ON Pa.passenger_id = " +
                 "PaTr.passenger_id LEFT JOIN trip Tr ON PaTr.trip_id = " +
                 "Tr.trip_id WHERE town_to = 'California' AND plane = " +

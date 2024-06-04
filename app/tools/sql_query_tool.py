@@ -5,6 +5,8 @@ from typing import (
     Any
 )
 
+from app.tools.base import AgentBaseTool
+
 from langchain.agents.openai_tools.base import convert_to_openai_tool
 
 from langchain_core.messages.human import HumanMessage
@@ -16,7 +18,7 @@ from langchain_core.pydantic_v1 import (
 from langchain_community.utilities.sql_database import SQLDatabase
 
 
-class SQLQueryTool:
+class SQLQueryTool(AgentBaseTool):
     def __init__(
         self,
         db: SQLDatabase,
