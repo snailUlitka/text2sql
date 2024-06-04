@@ -1,5 +1,9 @@
 """Tool for getting info about listed tables"""
 import re
+from typing import (
+    Dict,
+    Any
+)
 
 from app.tools.base import AgentBaseTool
 
@@ -21,8 +25,7 @@ class DatabaseTableInfoTool(AgentBaseTool):
         *,
         tool_name="__info_sql_database_tool"
     ):
-        self.db = db
-        self.tool_name = tool_name
+        super().__init__(db, tool_name=tool_name)
 
     class InfoSQLDatabaseTool(BaseModel):
         """
@@ -37,7 +40,13 @@ class DatabaseTableInfoTool(AgentBaseTool):
                 "table2, table3"
         )
 
-    def _execute_tool(self, list_of_tables: str):
+    def _execute_tool(self, **kwargs):
+        list_of_tables = kwargs.get("list_of_tables")
+        
+        if not isinstance(list_of_tables, str):
+            raise ValueError("'kwargs' should contain 'list_of_tables' and " +
+                             "'list_of_tables' should be 'str'")
+        
         res = ""
 
         res += "company, " if "company" in list_of_tables else ""
@@ -51,10 +60,10 @@ class DatabaseTableInfoTool(AgentBaseTool):
             [t.strip() for t in res.split(",")]
         )
 
-    def get_tool_name(self):
-        return self.tool_name
-
-    def get_function(self, list_tool_name="__list_sql_database_tool"):
+    def get_function(self, **kwargs) -> Dict[str, Any]:
+        list_tool_name = kwargs.get("list_tool_name", 
+                                    "__list_sql_database_tool")
+        
         func = convert_to_openai_tool(self.InfoSQLDatabaseTool)["function"]
 
         func["name"] = self.tool_name
@@ -68,9 +77,6 @@ class DatabaseTableInfoTool(AgentBaseTool):
         func["description"] = re.sub(r"\s+", " ", func["description"])
 
         return func
-
-    def get_tool(self):
-        return self._execute_tool
 
     def wrap_result_with_human_message(
         self, 

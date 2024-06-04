@@ -1,6 +1,9 @@
 """Tool for execute SQL query"""
 import re
-from typing import Dict
+from typing import (
+    Dict,
+    Any
+)
 
 from langchain.agents.openai_tools.base import convert_to_openai_tool
 
@@ -20,8 +23,7 @@ class SQLQueryTool:
         *,
         tool_name="__query_sql_database_tool"
     ):
-        self.db = db
-        self.tool_name = tool_name
+        super().__init__(db, tool_name=tool_name)
 
     class QuerySQLDatabaseTool(BaseModel):
         """INPUT to this tool is a DETAILED and CORRECT SQL query, 
@@ -35,7 +37,13 @@ class SQLQueryTool:
             description="Detailed and correct SQL query."
         )
 
-    def _execute_tool(self, sql_query: str):
+    def _execute_tool(self, **kwargs):
+        sql_query = kwargs.get("sql_query")
+        
+        if not isinstance(sql_query, str):
+            raise ValueError("'kwargs' should contain 'sql_query' and " +
+                             "'sql_query' should be 'str'") 
+        
         result: Dict[str, str] = {}
 
         try:
@@ -47,10 +55,10 @@ class SQLQueryTool:
 
         return result
 
-    def get_tool_name(self):
-        return self.tool_name
-
-    def get_function(self, info_tool_name="__info_sql_database_tool"):
+    def get_function(self, **kwargs) -> Dict[str, Any]:
+        info_tool_name = kwargs.get("info_tool_name", 
+                                    "__info_sql_database_tool")
+        
         func = convert_to_openai_tool(self.QuerySQLDatabaseTool)["function"]
 
         func["name"] = self.tool_name

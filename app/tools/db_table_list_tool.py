@@ -1,5 +1,11 @@
 """Tool for getting a list of tables"""
 import re
+from typing import (
+    Dict, 
+    Any
+)
+
+from app.tools.base import AgentBaseTool
 
 from langchain.agents.openai_tools.base import convert_to_openai_tool
 
@@ -12,15 +18,14 @@ from langchain_core.pydantic_v1 import (
 from langchain_community.utilities.sql_database import SQLDatabase
 
 
-class DatabaseTableListTool:
+class DatabaseTableListTool(AgentBaseTool):
     def __init__(
         self,
         db: SQLDatabase,
         *,
         tool_name="__list_sql_database_tool"
     ):
-        self.db = db
-        self.tool_name = tool_name
+        super().__init__(db, tool_name=tool_name)
 
     class ListSQLDatabaseTool(BaseModel):
         """INPUT to this tool is a EMPTY STRING, 
@@ -29,13 +34,10 @@ class DatabaseTableListTool:
         tables needed to respond to the user."""
         empty_string: str = Field(description="Empty string")
 
-    def _execute_tool(self, empty_string: str = ""):
+    def _execute_tool(self, **kwargs):
         return ", ".join(self.db.get_usable_table_names())
 
-    def get_tool_name(self):
-        return self.tool_name
-
-    def get_function(self):
+    def get_function(self, **kwargs) -> Dict[str, Any]:
         func = convert_to_openai_tool(self.ListSQLDatabaseTool)["function"]
 
         func["name"] = self.tool_name
@@ -43,19 +45,14 @@ class DatabaseTableListTool:
 
         return func
 
-    def get_tool(self):
-        return self._execute_tool
-
     def wrap_result_with_human_message(
         self,
         tool_result: str,
         example=False,
         **kwagrs
     ):
-        info_tool_name = kwagrs.get(
-            "info_tool_name",
-            "__info_sql_database_tool"
-        )
+        info_tool_name = kwagrs.get("info_tool_name", 
+                                    "__info_sql_database_tool")
         
         return HumanMessage(
             content="I can help you execute the tool. Give me a second... " +

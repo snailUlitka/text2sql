@@ -1,8 +1,10 @@
 """Tool for check SQL query."""
 import re
 from typing import (
+    Dict,
     List,
-    Optional
+    Optional,
+    Any
 )
 
 from langchain.chat_models.base import BaseChatModel
@@ -68,13 +70,12 @@ class SQLCheckerTool:
     ):
         """
         `key_words` - keywords that are used in the 
-        CREATE TABLE construction
+        CREATE TABLE construction, `keywords` are excluded when parsing names
         """
+        super().__init__(db, tool_name=tool_name)
+        
         self.llm = llm
-        self.db = db
-        self.tool_name = tool_name
-
-        self.key_words = KEY_WORDS if key_words is None else key_words
+        self.key_words = key_words or KEY_WORDS
 
         if checker_prompt is None:
             self.checker_prompt = ChatPromptTemplate.from_messages((
@@ -138,7 +139,13 @@ class SQLCheckerTool:
 
         return names
 
-    def _execute_tool(self, query_to_check: str) -> str:
+    def _execute_tool(self, **kwargs) -> str:
+        query_to_check = kwargs.get("query_to_check")
+        
+        if not isinstance(query_to_check, str):
+            raise ValueError("'kwargs' should contain 'query_to_check' and " +
+                             "'query_to_check' should be 'str'") 
+            
         db_names_list = self._extract_names_from_db()
 
         db_names = ""
@@ -156,10 +163,10 @@ class SQLCheckerTool:
             "dialect": self.db.dialect,
         })
 
-    def get_tool_name(self):
-        return self.tool_name
-
-    def get_function(self, query_tool_name="__query_sql_database_tool"):
+    def get_function(self, **kwargs) -> Dict[str, Any]:
+        query_tool_name = kwargs.get("query_tool_name", 
+                                    "__query_sql_database_tool")
+        
         func = convert_to_openai_tool(self.QuerySQLCheckerTool)["function"]
 
         func["name"] = self.tool_name
@@ -173,9 +180,6 @@ class SQLCheckerTool:
         func["description"] = re.sub(r"\s+", " ", func["description"])
 
         return func
-
-    def get_tool(self):
-        return self._execute_tool
 
     def wrap_result_with_human_message(
         self, 
