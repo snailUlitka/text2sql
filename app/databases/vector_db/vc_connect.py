@@ -16,7 +16,7 @@ from app.databases.local_data import (
     VC_USER
 )
 
-from langchain_community.vectorstores.pgvector import PGVector
+from langchain_postgres.vectorstores import PGVector
 
 from langchain.prompts.example_selector import (
     SemanticSimilarityExampleSelector
@@ -27,7 +27,7 @@ from langchain.embeddings.base import Embeddings
 
 def get_vc(embedding_llm: Embeddings) -> PGVector:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
-        driver="psycopg2",
+        driver="psycopg",
         host=VC_HOST,
         port=VC_PORT,
         database=VC_NAME,
@@ -53,7 +53,7 @@ def get_selector(
     input_keys: List[str]
 ) -> SemanticSimilarityExampleSelector:
     CONNECTION_STRING = PGVector.connection_string_from_db_params(
-        driver="psycopg2",
+        driver="psycopg",
         host=VC_HOST,
         port=VC_PORT,
         database=VC_NAME,
@@ -67,7 +67,7 @@ def get_selector(
         PGVector,
         k=k,
         input_keys=input_keys,
-        connection_string=CONNECTION_STRING,
+        connection=CONNECTION_STRING,
         pre_delete_collection=True,
         use_jsonb=True
     )
