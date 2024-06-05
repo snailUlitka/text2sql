@@ -8,7 +8,7 @@ from typing import (
     List
 )
 
-from app.databases.local_data import (
+from llm_app.databases.local_data import (
     PASSWORD_OF_VC_STORE,
     VC_HOST,
     VC_PORT,

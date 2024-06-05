@@ -1,5 +1,5 @@
 """Stores an array with messages that show the agent how to use the tools."""
-from app.tools import (
+from llm_app.tools import (
     SQLQueryTool,
     DatabaseTableInfoTool,
     DatabaseTableListTool,

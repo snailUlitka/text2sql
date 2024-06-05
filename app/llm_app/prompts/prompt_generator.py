@@ -9,10 +9,10 @@ from typing import (
     Dict
 )
 
-from app.databases.vector_db import get_selector
-from app.databases.external_db import get_db
-from app.examples.messages_examples import get_messages_example
-from app.prompts.sql_expert_prompt import (
+from llm_app.databases.vector_db import get_selector
+from llm_app.databases.external_db import get_db
+from llm_app.examples.messages_examples import get_messages_example
+from llm_app.prompts.sql_expert_prompt import (
     PREFIX,
     TABLE_DESCRIPTIONS,
     SUFFIX,
@@ -21,8 +21,6 @@ from app.prompts.sql_expert_prompt import (
 from langchain.embeddings.base import Embeddings
 from langchain.chat_models.base import BaseChatModel
 
-from langchain_core.messages.ai import AIMessage
-from langchain_core.messages.human import HumanMessage
 from langchain_core.example_selectors import BaseExampleSelector
 
 from langchain_core.prompts import (

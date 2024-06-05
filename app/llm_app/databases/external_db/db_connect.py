@@ -3,7 +3,7 @@ Provides access to the database according to the specified parameters
 `local_data.py` data for connection.
 Data in `local_data.py` you can create using `local_data_template.py`
 """
-from app.databases.local_data import (
+from llm_app.databases.local_data import (
     PASSWORD_FOR_LLM,
     DB_HOST,
     DB_PORT,

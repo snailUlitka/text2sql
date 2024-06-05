@@ -1,5 +1,5 @@
 """Vector database to store embeddings"""
-from app.databases.vector_db.vc_connect import (
+from llm_app.databases.vector_db.vc_connect import (
     get_selector,
     get_vc
 )

@@ -5,7 +5,7 @@ from typing import (
     Any
 )
 
-from app.tools.base import AgentBaseTool
+from llm_app.tools.base import AgentBaseTool
 
 from langchain.agents.openai_tools.base import convert_to_openai_tool
 

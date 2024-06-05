@@ -7,9 +7,9 @@ from typing import (
     Any
 )
 
-from app.tools import get_tools
-from app.tools import AgentBaseTool
-from app.prompts import PromptGenerator
+from llm_app.tools import get_tools
+from llm_app.tools import AgentBaseTool
+from llm_app.prompts import PromptGenerator
 
 from langchain_core.runnables import RunnableLambda, Runnable
 from langchain.schema.agent import AgentFinish, AgentActionMessageLog
