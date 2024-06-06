@@ -3,8 +3,7 @@ from typing import (
     List,
     Tuple,
     Dict,
-    Optional,
-    Any
+    Optional
 )
 
 from llm_app.tools import get_tools
@@ -107,6 +106,8 @@ class OllamaFunctionsSQLAgent:
 
         return agent
 
+    # TODO: REFACTOR THIS
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def run_agent(
         self,
         input: str,
@@ -122,7 +123,7 @@ class OllamaFunctionsSQLAgent:
                 "top_k": top_k,
                 "intermediate_steps": intermediate_steps
             })
-
+            # TODO: ADD LOGGING
             if isinstance(result, AgentFinish):
                 return result
             else:
@@ -186,6 +187,7 @@ class OllamaFunctionsSQLAgent:
             number_of_iteration += 1
 
         return "Agent stop due to limited number of iterations!"
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def get_runnable(self) -> Runnable:
         return RunnableLambda(func=self.run_agent, afunc=self.async_run_agent)
