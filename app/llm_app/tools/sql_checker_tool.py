@@ -10,7 +10,7 @@ from typing import (
 from llm_app.tools.base import AgentBaseTool
 
 from langchain.chat_models.base import BaseChatModel
-from langchain.agents.openai_tools.base import convert_to_openai_tool
+from langchain_core.utils.function_calling import convert_to_openai_tool
 from langchain.prompts import (
     ChatPromptTemplate,
     BaseChatPromptTemplate

@@ -10,9 +10,16 @@ from llm_app.tools import get_tools
 from llm_app.tools import AgentBaseTool
 from llm_app.prompts import PromptGenerator
 
-from langchain_core.runnables import RunnableLambda, Runnable
-from langchain.schema.agent import AgentFinish, AgentActionMessageLog
+from langchain_core.runnables import (
+    RunnableLambda, 
+    Runnable
+)
+from langchain.schema.agent import (
+    AgentFinish, 
+    AgentActionMessageLog
+)
 from langchain.chat_models.base import BaseChatModel
+# TODO:_DEPRECATED____________________________________________
 from langchain.agents.output_parsers.openai_functions import (
     OpenAIFunctionsAgentOutputParser
 )
@@ -105,13 +112,14 @@ class OllamaFunctionsSQLAgent:
         )
 
         return agent
-
+    
+    # TODO: Edit signature for all run funcs
     # TODO: REFACTOR THIS
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def run_agent(
         self,
         input: str,
-        top_k=20
+        top_k: int
     ) -> AgentFinish | str:
         number_of_iteration = 0
         intermediate_steps = []
@@ -151,7 +159,7 @@ class OllamaFunctionsSQLAgent:
     async def async_run_agent(
         self,
         input: str,
-        top_k=20
+        top_k: int
     ) -> AgentFinish | str:
         number_of_iteration = 0
         intermediate_steps = []
@@ -189,8 +197,21 @@ class OllamaFunctionsSQLAgent:
         return "Agent stop due to limited number of iterations!"
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    def _run_agent_wrapper(self, input_dict: Dict[str, str | int]):
+        input = input_dict.get("input")
+        top_k = input_dict.get("top_k", 20)
+
+        return self.run_agent(input, top_k)
+    
+    def _async_run_agent_wrapper(self, input_dict: Dict[str, str | int]):
+        input = input_dict.get("input")
+        top_k = input_dict.get("top_k", 20)
+
+        return self.async_run_agent(input, top_k)
+
     def get_runnable(self) -> Runnable:
-        return RunnableLambda(func=self.run_agent, afunc=self.async_run_agent)
+        return RunnableLambda(func=self._run_agent_wrapper, 
+                              afunc=self._async_run_agent_wrapper)
 
 
 class ToolNotFoundException(Exception):
