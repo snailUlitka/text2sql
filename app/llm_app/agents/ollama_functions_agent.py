@@ -1,4 +1,5 @@
 """Agent to interact with SQL database based on OllamaFunctions wrapper"""
+import logging
 from typing import (
     List,
     Tuple,
@@ -11,15 +12,15 @@ from llm_app.tools import AgentBaseTool
 from llm_app.prompts import PromptGenerator
 
 from langchain_core.runnables import (
-    RunnableLambda, 
+    RunnableLambda,
     Runnable
 )
 from langchain.schema.agent import (
-    AgentFinish, 
+    AgentFinish,
     AgentActionMessageLog
 )
 from langchain.chat_models.base import BaseChatModel
-# TODO:_DEPRECATED____________________________________________
+# FIXME:_DEPRECATED___________________________________________
 from langchain.agents.output_parsers.openai_functions import (
     OpenAIFunctionsAgentOutputParser
 )
@@ -33,6 +34,9 @@ from langchain_experimental.llms.ollama_functions import (
     OllamaFunctions,
     DEFAULT_RESPONSE_FUNCTION
 )
+
+logging.basicConfig(filename=".\\logs\\log.txt", level=logging.INFO, 
+                    format="%(asctime)s %(levelname)s:%(message)s")
 
 
 class OllamaFunctionsSQLAgent:
@@ -112,10 +116,7 @@ class OllamaFunctionsSQLAgent:
         )
 
         return agent
-    
-    # TODO: Edit signature for all run funcs
-    # TODO: REFACTOR THIS
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     def run_agent(
         self,
         input: str,
@@ -131,7 +132,9 @@ class OllamaFunctionsSQLAgent:
                 "top_k": top_k,
                 "intermediate_steps": intermediate_steps
             })
-            # TODO: ADD LOGGING
+
+            logging.info(f"Run result: {result}")
+
             if isinstance(result, AgentFinish):
                 return result
             else:
@@ -155,7 +158,7 @@ class OllamaFunctionsSQLAgent:
             number_of_iteration += 1
 
         return "Agent stop due to limited number of iterations!"
-    
+
     async def async_run_agent(
         self,
         input: str,
@@ -171,6 +174,8 @@ class OllamaFunctionsSQLAgent:
                 "top_k": top_k,
                 "intermediate_steps": intermediate_steps
             })
+            
+            logging.info(f"Async run result: {result}")
 
             if isinstance(result, AgentFinish):
                 return result
@@ -195,14 +200,13 @@ class OllamaFunctionsSQLAgent:
             number_of_iteration += 1
 
         return "Agent stop due to limited number of iterations!"
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     def _run_agent_wrapper(self, input_dict: Dict[str, str | int]):
         input = input_dict.get("input")
         top_k = input_dict.get("top_k", 20)
 
         return self.run_agent(input, top_k)
-    
+
     def _async_run_agent_wrapper(self, input_dict: Dict[str, str | int]):
         input = input_dict.get("input")
         top_k = input_dict.get("top_k", 20)
@@ -210,7 +214,7 @@ class OllamaFunctionsSQLAgent:
         return self.async_run_agent(input, top_k)
 
     def get_runnable(self) -> Runnable:
-        return RunnableLambda(func=self._run_agent_wrapper, 
+        return RunnableLambda(func=self._run_agent_wrapper,
                               afunc=self._async_run_agent_wrapper)
 
 
