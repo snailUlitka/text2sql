@@ -5,3 +5,8 @@
 .idea/
 .pycharm/
 .continueignore
+.env
+.pytest_cache/
+.ruff_cache/
+dist/
+*.egg-info/

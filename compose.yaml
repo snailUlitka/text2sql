@@ -1,0 +1,21 @@
+name: text2sql-demo
+services:
+  postgres:
+    image: postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
+    environment:
+      POSTGRES_DB: airlines
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: demo_admin
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - demo_db:/var/lib/postgresql/data
+      - ./scripts/demo.sql:/docker-entrypoint-initdb.d/01-demo.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d airlines"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  demo_db:

@@ -1,0 +1,140 @@
+[
+  {
+    "id": "q01",
+    "question": "Print the first 5 names of the passengers, sorted by name",
+    "reference_sql": "SELECT passenger_name FROM passenger ORDER BY passenger_name LIMIT 5;",
+    "ordered": true,
+    "few_shot_overlap": "none",
+    "overlap_example_ids": []
+  },
+  {
+    "id": "q02",
+    "question": "Print the names of all companies",
+    "reference_sql": "SELECT company_name FROM company;",
+    "ordered": false,
+    "few_shot_overlap": "same_intent",
+    "overlap_example_ids": [
+      "fs09"
+    ]
+  },
+  {
+    "id": "q03",
+    "question": "Print all planes from flights from Washington",
+    "reference_sql": "SELECT plane FROM trip WHERE town_from = 'Washington';",
+    "ordered": false,
+    "few_shot_overlap": "same_intent",
+    "overlap_example_ids": [
+      "fs06"
+    ]
+  },
+  {
+    "id": "q04",
+    "question": "Print the names of people that end in \"man\"",
+    "reference_sql": "SELECT passenger_name FROM passenger WHERE passenger_name LIKE '%man';",
+    "ordered": false,
+    "few_shot_overlap": "none",
+    "overlap_example_ids": []
+  },
+  {
+    "id": "q05",
+    "question": "Print the number of flights made on Airbus A319",
+    "reference_sql": "SELECT COUNT(*) FROM trip WHERE plane = 'Airbus A319';",
+    "ordered": false,
+    "few_shot_overlap": "none",
+    "overlap_example_ids": []
+  },
+  {
+    "id": "q06",
+    "question": "Which companies have flown on Airbus A321-100",
+    "reference_sql": "SELECT company_name FROM company Co LEFT JOIN trip Tr ON Tr.company_id = Co.company_id WHERE Tr.plane = 'Airbus A321-100';",
+    "ordered": false,
+    "few_shot_overlap": "none",
+    "overlap_example_ids": []
+  },
+  {
+    "id": "q07",
+    "question": "Print all the names of the planes on which you can fly to California",
+    "reference_sql": "SELECT plane FROM trip WHERE town_to = 'California';",
+    "ordered": false,
+    "few_shot_overlap": "related",
+    "overlap_example_ids": [
+      "fs06"
+    ]
+  },
+  {
+    "id": "q08",
+    "question": "Which companies organize flights from Gongkong?",
+    "reference_sql": "SELECT company_name FROM company Co LEFT JOIN trip Tr ON Tr.company_id = Co.company_id WHERE Tr.town_from = 'Gongkong';",
+    "ordered": false,
+    "few_shot_overlap": "none",
+    "overlap_example_ids": []
+  },
+  {
+    "id": "q09",
+    "question": "Print the ids and the count of passengers for all past trips",
+    "reference_sql": "SELECT t.trip_id, COUNT(pt.passenger_id) FROM trip t LEFT JOIN pass_in_trip pt ON t.trip_id = pt.trip_id WHERE t.time_in < CURRENT_TIMESTAMP GROUP BY t.trip_id;",
+    "ordered": false,
+    "few_shot_overlap": "related",
+    "overlap_example_ids": [
+      "fs08"
+    ]
+  },
+  {
+    "id": "q10",
+    "question": "Which cities did Bob fly to",
+    "reference_sql": "SELECT town_to FROM passenger Pa LEFT JOIN pass_in_trip PaTr ON Pa.passenger_id = PaTr.passenger_id LEFT JOIN trip Tr ON PaTr.trip_id = Tr.trip_id WHERE passenger_name = 'Bob';",
+    "ordered": false,
+    "few_shot_overlap": "related",
+    "overlap_example_ids": [
+      "fs03"
+    ]
+  },
+  {
+    "id": "q11",
+    "question": "Print the date and time of arrival of passenger John in California",
+    "reference_sql": "SELECT time_in FROM trip Tr LEFT JOIN pass_in_trip PaTr ON PaTr.trip_Id = Tr.trip_id LEFT JOIN passenger Pa ON PaTr.passenger_id = Pa.passenger_id WHERE passenger_name = 'John' AND town_to = 'California';",
+    "ordered": false,
+    "few_shot_overlap": "related",
+    "overlap_example_ids": [
+      "fs03"
+    ]
+  },
+  {
+    "id": "q12",
+    "question": "How many flights have airlines flown from Washington to California?",
+    "reference_sql": "SELECT COUNT(*) FROM trip WHERE town_from = 'Washington' AND town_to = 'California';",
+    "ordered": false,
+    "few_shot_overlap": "related",
+    "overlap_example_ids": [
+      "fs13"
+    ]
+  },
+  {
+    "id": "q13",
+    "question": "Which cities can I fly to from Washington and how long will it take?",
+    "reference_sql": "SELECT town_to, (time_in - time_out) FROM trip WHERE town_from = 'Washington';",
+    "ordered": false,
+    "few_shot_overlap": "related",
+    "overlap_example_ids": [
+      "fs13"
+    ]
+  },
+  {
+    "id": "q14",
+    "question": "Print the passengers with the longest name. Spaces, hyphens, and dots are considered part of the name",
+    "reference_sql": "SELECT passenger_name FROM passenger WHERE CHAR_LENGTH(passenger_name) = (SELECT MAX(CHAR_LENGTH(passenger_name)) FROM passenger);",
+    "ordered": false,
+    "few_shot_overlap": "none",
+    "overlap_example_ids": []
+  },
+  {
+    "id": "q15",
+    "question": "Print the names of the passengers who flew to California by Airbus A320 aircraft",
+    "reference_sql": "SELECT passenger_name FROM passenger Pa LEFT JOIN pass_in_trip PaTr ON Pa.passenger_id = PaTr.passenger_id LEFT JOIN trip Tr ON PaTr.trip_id = Tr.trip_id WHERE town_to = 'California' AND plane = 'Airbus A320';",
+    "ordered": false,
+    "few_shot_overlap": "related",
+    "overlap_example_ids": [
+      "fs08"
+    ]
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "input": "How many passengers are in the database?",
+    "query": "SELECT COUNT(*) FROM public.\"passenger\";",
+    "id": "fs01"
+  },
+  {
+    "input": "What are the departure times of all flights?",
+    "query": "SELECT \"time_out\" FROM public.\"trip\";",
+    "id": "fs02"
+  },
+  {
+    "input": "What is John's place?",
+    "query": "SELECT \"place\" FROM public.\"pass_in_trip\"JOIN public.\"passenger\" ON public.\"passenger\".\"passenger_id\" = public.\"pass_in_trip\".\"passenger_id\" WHERE public.\"passenger\".\"passenger_name\" = 'John';",
+    "id": "fs03"
+  },
+  {
+    "input": "Give me all the information about 1 company",
+    "query": "SELECT * FROM public.\"company\" LIMIT 1;",
+    "id": "fs04"
+  },
+  {
+    "input": "Show me all the trips that are flying out today",
+    "query": "SELECT * FROM trip WHERE time_out::date = CURRENT_DATE;",
+    "id": "fs05"
+  },
+  {
+    "input": "Which planes depart from Washington?",
+    "query": "SELECT \"plane\" FROM public.\"trip\" WHERE \"town_from\" = 'Washington';",
+    "id": "fs06"
+  },
+  {
+    "input": "Print out the names of all the planes",
+    "query": "SELECT \"plane\" FROM public.\"trip\" LIMIT 20;",
+    "id": "fs07"
+  },
+  {
+    "input": "How many people fly on Airbus A320?",
+    "query": "SELECT COUNT(*) FROM public.\"pass_in_trip\" AS paip JOIN public.\"trip\" ON trip.\"trip_id\" = paip.\"trip_id\" WHERE trip.\"plane\" = 'Airbus A320';",
+    "id": "fs08"
+  },
+  {
+    "input": "List all companies.",
+    "query": "SELECT DISTINCT \"company_name\" FROM \"company\" LIMIT 20;",
+    "id": "fs09"
+  },
+  {
+    "input": "List all passengers.",
+    "query": "SELECT DISTINCT \"passenger_name\" FROM \"passenger\" LIMIT 20;",
+    "id": "fs10"
+  },
+  {
+    "input": "List all trips.",
+    "query": "SELECT DISTINCT \"plane\", \"town_from\", \"town_to\", \"time_out\", \"time_in\" FROM \"trip\" LIMIT 20;",
+    "id": "fs11"
+  },
+  {
+    "input": "List all passengers on a specific trip with ID 123.",
+    "query": "SELECT p.* FROM \"passenger\" p INNER JOIN \"pass_in_trip\" pt ON p.\"passenger_id\" = pt.\"passenger_id\" WHERE pt.\"trip_id\" = 123 LIMIT 20;",
+    "id": "fs12"
+  },
+  {
+    "input": "List all trips from 'New York' to 'Los Angeles'.",
+    "query": "SELECT \"plane\", \"town_from\", \"town_to\", \"time_out\", \"time_in\" FROM \"trip\" WHERE \"town_from\" = 'New York' AND \"town_to\" = 'Los Angeles' LIMIT 20;",
+    "id": "fs13"
+  },
+  {
+    "input": "List all passengers who traveled with 'Jet Airways'.",
+    "query": "SELECT DISTINCT p.passenger_name FROM passenger p JOIN pass_in_trip pt ON p.passenger_id = pt.passenger_id JOIN trip t ON pt.trip_id = t.trip_id JOIN company c ON t.company_id = c.company_id WHERE c.company_name = 'Jet Airways' LIMIT 20;",
+    "id": "fs14"
+  },
+  {
+    "input": "List all trips where 'John Smith' was a passenger.",
+    "query": "SELECT t.* FROM trip t JOIN pass_in_trip pt ON t.trip_id = pt.trip_id JOIN passenger p ON pt.passenger_id = p.passenger_id WHERE p.passenger_name = 'John Smith' LIMIT 20;",
+    "id": "fs15"
+  },
+  {
+    "input": "List all passengers who traveled from 'Chicago' to 'San Francisco' on 'Delta Airlines'.",
+    "query": "SELECT DISTINCT p.passenger_name FROM passenger p JOIN pass_in_trip pt ON p.passenger_id = pt.passenger_id JOIN trip t ON pt.trip_id = t.trip_id JOIN company c ON t.company_id = c.company_id WHERE t.town_from = 'Chicago' AND t.town_to = 'San Francisco' AND c.company_name = 'Delta Airlines' LIMIT 20;",
+    "id": "fs16"
+  },
+  {
+    "input": "List all trips that departed after '2024-01-01 00:00:00'.",
+    "query": "SELECT * FROM \"trip\" WHERE \"time_out\" > '2024-01-01 00:00:00' LIMIT 20;",
+    "id": "fs17"
+  },
+  {
+    "input": "List all passengers who traveled with 'Air Canada' and sat in seat 'A3'.",
+    "query": "SELECT DISTINCT p.passenger_name FROM passenger p JOIN pass_in_trip pt ON p.passenger_id = pt.passenger_id JOIN trip t ON pt.trip_id = t.trip_id JOIN company c ON t.company_id = c.company_id WHERE c.company_name = 'Air Canada' AND pt.place = 'A3' LIMIT 20;",
+    "id": "fs18"
+  }
+]
