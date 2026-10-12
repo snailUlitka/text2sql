@@ -1,97 +1,156 @@
-# ✨ RAG System with LangChain, Ollama, and LLaMa 💡
+# text2sql
 
-## 📚 Project Overview
+A local text-to-SQL agent for a small PostgreSQL database. Ask a question in
+English; the agent retrieves similar SQL examples, calls database tools through
+Ollama, and returns an answer together with the SQL and bounded result rows.
 
-Welcome to our awesome Retrieval-Augmented Generation (RAG) project! 🚀 This system is tailored to supercharge your AI-driven data retrieval and generation capabilities. We've packed it with fantastic features and some delightful tech ingredients to make it all work smoothly.
+The project started as an experiment in April–June 2024. The 2026 update provides
+an installable Python library and a thin FastAPI v2 service. It is a demonstration
+project with a tiny airline fixture, not a production database assistant.
 
-### What’s Inside? 🤔
+## Quickstart
 
-This RAG system is like the Swiss Army knife of AI. Here’s a sneak peek at what it includes:
+Requires Python 3.12, [uv](https://docs.astral.sh/uv/), Docker with Compose, and a
+running local [Ollama](https://ollama.com/) service. The two models require about
+2.8 GB of downloads. Run these commands from the repository root:
 
-- 🔗 **LangChain**: This helps in chaining multiple components together.
-- 🦙 **Ollama & LLaMa**: No, not the animal! These are powerful models working behind the scenes.
-- 🗄️ **Vector Database**: For those fancy embeddings.
-- 🧪 **Test Database**: Because we all need to test stuff before going big.
-- 🤖 **AI Prompt Generation**: Super smart prompts to get you the best results.
+```sh
+uv sync --locked --group dev
+cp .env.example .env
+docker compose up -d --wait
+ollama pull qwen3:4b-instruct-2507-q4_K_M
+ollama pull nomic-embed-text
+uv run python examples/invoke.py
+```
 
-### How to Start the Agent? 🚦
+Compose creates an `airlines` database on `127.0.0.1:5433`. The fixture contains
+45 passengers, three companies, three trips and 45 seat assignments. Its dates
+are historical and its names and routes are illustrative. The credentials in
+Compose and `.env.example` are public local-demo credentials.
 
-Our RAG system comes with an agent that can be started through the server using FastAPI. Just imagine FastAPI as the chef, and the agent as the delicious dish ready to be served. 🍽️
+The example asks for the first five passenger names in alphabetical order.
+The tested model returned `Alice`, `Bob`, `Charlie`, `Christofer`, `David` using
+`SELECT DISTINCT passenger_name FROM passenger ORDER BY passenger_name LIMIT 5`.
 
-### Setup and Manage Connections 🔧
+To stop the demo database, use `docker compose stop`. Initialization SQL runs
+when the Compose volume is first created; an existing volume keeps its data.
 
-Effortlessly set up and manage connections to your vector database for embeddings and our small test database. Less hassle, more action! 🏃‍♂️
+## Python API
 
-### Get Started and Have Fun! 🎈
+The library can be used without HTTP. Resource construction is explicit:
 
-Ready to dive in? This project makes setting things up a breeze and ensures you have fun while at it. Data doesn't have to be boring, and with a bit of humor and emojis, everything's more enjoyable. 😎
+```python
+from langchain_ollama import ChatOllama
+from text2sql import Database, SQLAgent, Settings
 
----
+settings = Settings()
+database = Database(settings.database_url.get_secret_value())
+database.initialize()
+model = ChatOllama(
+    model=settings.model,
+    base_url=settings.ollama_url,
+    temperature=0,
+    reasoning=False,
+)
+agent = SQLAgent(model=model, database=database)
+result = agent.invoke("How many passengers are in the database?", top_k=5)
+print(result.answer)
+print(result.sql)
+```
 
-Now, go ahead, start the agent with FastAPI, and witness the power-packed combo of LangChain, Ollama, LLaMa, and our databases at work. 🚀
+For the configured model, semantic example retrieval and execution limits,
+use `build_agent(Settings())` from `text2sql.runtime`, as in
+[`examples/invoke.py`](examples/invoke.py). `SQLAgent` also accepts an explicitly
+constructed retriever and additional LangChain tools. Module imports do not
+connect to a database or instantiate a model.
 
----
+## HTTP API v2
 
-## 📜 Some information about scripts
+```sh
+uv run uvicorn text2sql.api:app --host 127.0.0.1 --port 8000
+```
 
-### 🔍 `test_data.py`
+In another terminal:
 
-A class with a set of data and useful functions for managing this data.
+```sh
+curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8000/text2sql/v2/invoke \
+  -H 'Content-Type: application/json' \
+  -d '{"input":"How many passengers are in the database?","top_k":5}'
+```
 
-### 🤖 `sql_agent.ipynb`
+The response contains `answer`, `sql`, `result` (column names, rows and a
+`truncated` flag), and `execution` (model iterations, tool calls, SQL attempts,
+errors, corrections, elapsed time and selected example IDs). Internal model
+reasoning and tool-message transcripts are not exposed.
 
-Jupyter notebook that which shows the agent's capabilities.
+`top_k` is the maximum number of returned rows, including for SQL that omits a
+LIMIT. Its default is 20 and the configured maximum is 100. Aggregate queries
+still count all matching rows. Validation and bounded-agent failures return
+HTTP 422; unavailable model/database/retrieval services return HTTP 503 with
+an `error.code` and a short message. FastAPI's `/docs` shows the schemas.
 
-### 🔌 `vc_connect.py` and `db_connect.py`
+The service loads resources during startup. `/health` confirms startup
+readiness; it does not probe dependencies on every request. API v1 is removed.
+The Python package version (0.2.0) is separate from the HTTP API version.
 
-Contains connection utilities for a connection to vector and test DB. 
+## How it works
 
-Key function:
-- `get_selector`: Sets up a semantic similarity example selector.
-- `get_vc`: Initializes a database connection for vector embeddings.
-- `get_db`: Initializes a database connection for small test DB.
+- LangChain's `ChatOllama` binds native tools. One bounded loop dispatches
+  validated calls and sends observations back as tool messages.
+- An in-memory semantic index selects three of 18 SQL examples using
+  `nomic-embed-text`; it requires no pgvector service.
+- PostgreSQL errors return to the same model loop for correction. Defaults
+  allow eight model calls and 16 tool calls per question.
+- Database queries use a separate SELECT-only login, a three-second statement
+  timeout, an enforced row limit and a 20,000-character serialized-result cap.
 
-### ✨ `prompt_generator.py`
+Configuration comes from `TEXT2SQL_*` environment variables or `.env`;
+see [`.env.example`](.env.example). uv separates runtime dependencies from
+development tools. There is no direct LangServe or LangSmith integration;
+`langsmith` is currently a transitive dependency of LangChain Core.
 
-Class `PromptGenerator` allows the creation and management of prompts used by the AI agent. 
+## Checks and evaluation
 
-It includes:
-- `set_example_selector`: Configures the example selector based on provided examples and embeddings.
-- `get_prompt`: Generates a prompt based on given parameters like prefix/suffix and table descriptions.
+```sh
+uv run ruff check .
+uv run ruff format --check .
+uv run pytest -m "not db"
+TEXT2SQL_TEST_DATABASE_URL=postgresql://text2sql_reader:demo_reader@127.0.0.1:5433/airlines \
+  uv run pytest -m db
+uv run text2sql-eval --reference-only --output /tmp/text2sql-references.json
+uv run text2sql-eval --output evals/results.json
+```
 
----
+CI runs Ruff and fast tests with a scripted model, without an LLM or database.
+The DB smoke test and real LLM evaluation are separate manual checks.
+The [15-question evaluation](evals/README.md) compares SQL result rows rather
+than answer wording. Some questions overlap semantically with few-shot examples,
+and the database has only three trips. A score on this set is a demonstration
+result, not a general accuracy claim.
 
-## 🚀 Getting Started
+On 2026-10-08, `qwen3:4b-instruct-2507-q4_K_M` with `nomic-embed-text` matched
+all 15 reference SQL results, with a median of 3.969 seconds per question and
+one SQL correction. The run used Python 3.12.11, PostgreSQL 17.11 and a 16 GB
+ARM64 Mac. [The recorded results](evals/results.json) include model digests,
+generation parameters and the actual SQL. Natural-language answers were not scored.
 
-### 🔧 Setup Instructions
+## Limits
 
-1. **Clone the repository**:
-    ```sh
-    git clone <repository_url>
-    cd <repository_directory>
-    ```
+Small local models can generate incorrect SQL, stop before calling a tool, or
+misstate a correct database result. SQL-row equality does not score the final
+answer's factual quality. A successful query is evidence, not a guarantee that
+the agent interpreted the question correctly.
 
-2. **Set up the database**:
-    - Use the SQL script in `app/llm_app/databases/_config/...` to create the necessary database.
+The prompt and SQL parser are not a security sandbox. SELECT may call database
+functions; use a dedicated account and restrict schemas, roles, functions and
+data when adapting this demo. An individual large value can be transferred
+before the character cap is checked. The HTTP service has no authentication
+and is intended to run locally. See [design notes](docs/design.md) for the
+database boundary and migration decisions.
 
-3. **Generate local data configuration**:
-    - Run the `app/llm_app/config/local_data_template.py` script to create `local_data.py` with your local database credentials.
+## License
 
-4. **Install dependencies**:
-    - Ensure you install all necessary Python packages (not listed here, but you may refer to your package manager or a `requirements.txt` file).
+[MIT](LICENSE). Model weights and dependencies have their own licenses.
 
-### 📚 Examples
-
-Jupyter notebook `examples/sql_agent.ipynb` to see the agent in action.
-
----
-
-## 🤝 Contributing
-
-Feel free to submit issues or pull requests. Contributions are welcome!
-
----
-
-## ✨ Acknowledgments
-
-Special thanks to all contributors and the open-source community!
+[Historical approach (2024)](docs/design.md)
