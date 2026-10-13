@@ -27,6 +27,10 @@ text2sql-eval = "text2sql.evaluation:main"
 [dependency-groups]
 dev = ["httpx>=0.28,<1", "pytest>=8,<10", "ruff>=0.11,<1"]
 
+[tool.uv]
+# Keep the lockfile's seven-day release cooldown consistent locally and in CI.
+exclude-newer = "7 days"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/text2sql"]
 
